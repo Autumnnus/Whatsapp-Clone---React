@@ -1,28 +1,33 @@
-import { collection, onSnapshot, query } from "@firebase/firestore";
+import {
+  DocumentData,
+  collection,
+  onSnapshot,
+  query,
+} from "@firebase/firestore";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { authFBConfig, db } from "../../../config/config";
 import { UserSliceStateSelector } from "../../../types/UserTypes";
 import UserCard from "../Users/UserCard";
 
+type ActiveChat = {
+  id: string;
+  data: DocumentData;
+};
+
 const MessageInbox: React.FC = () => {
-  const [activeChats, setActiveChats] = useState<any[]>([]);
+  const [activeChats, setActiveChats] = useState<ActiveChat[]>([]);
   const users = useSelector(
     (state: UserSliceStateSelector) => state.userStore.users,
   );
 
-  // Use the standard Firebase currentUser UID
   const currentUid = authFBConfig.currentUser?.uid;
 
   useEffect(() => {
     if (!currentUid) return;
 
     const messagesRef = collection(db, "messages");
-    // We can't use 'contains' on the room string easily in Firestore query,
-    // but we can listen to all messages and filter unique rooms locally for a simple app.
-    // In a real app, you'd have a 'chats' collection.
     const q = query(messagesRef);
-    console.log("q", q);
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const rooms = new Set<string>();
@@ -31,7 +36,6 @@ const MessageInbox: React.FC = () => {
         if (data.room && data.room.includes(currentUid)) {
           rooms.add(data.room);
         }
-        console.log("data", data);
       });
 
       const participantIds = Array.from(rooms).map((room) => {
@@ -39,7 +43,6 @@ const MessageInbox: React.FC = () => {
         return ids[0] === currentUid ? ids[1] : ids[0];
       });
 
-      // Filter global users list to only include those we have a chat with
       const chats = (users ?? []).filter((u) => participantIds.includes(u.id));
       setActiveChats(chats);
     });

@@ -19,33 +19,31 @@ const UserCard: React.FC<UserCardProps> = ({ id, name, photo, status }) => {
     }
   };
   return (
-    <div className="w-full">
-      <div
-        className="flex items-center px-[13px] h-[72px] bg-whatsapp-panel hover:bg-[#2a3942] cursor-pointer transition-colors group"
-        onClick={cardSubmit}
-      >
-        <div className="w-[49px] h-[49px] rounded-full overflow-hidden shrink-0 mr-[15px]">
-          <img
-            src={
-              photo ||
-              "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
-            }
-            alt="profile"
-            className="w-full h-full object-cover"
-          />
+    <div
+      className="flex items-center px-3 h-[72px] bg-whatsapp-panel hover:bg-[#202c33] cursor-pointer transition-colors group relative"
+      onClick={cardSubmit}
+    >
+      <div className="w-[49px] h-[49px] rounded-full overflow-hidden shrink-0 mr-4">
+        <img
+          src={
+            photo ||
+            "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+          }
+          alt="profile"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="flex-1 flex flex-col justify-center h-full border-b border-[#222d34] group-hover:border-transparent pr-2">
+        <div className="flex justify-between items-center">
+          <h3 className="text-whatsapp-primary text-[17px] font-normal truncate">
+            {name}
+          </h3>
+          <span className="text-[12px] text-whatsapp-secondary">Yesterday</span>
         </div>
-        <div className="flex-1 flex flex-col justify-center h-full border-b border-whatsapp-border group-hover:border-transparent py-3 pr-2">
-          <div className="flex justify-between items-center mb-1">
-            <h3 className="text-whatsapp-primary text-[17px] font-normal">
-              {name}
-            </h3>
-            <span className="text-xs text-whatsapp-secondary">Yesterday</span>
-          </div>
-          <div className="flex justify-between items-center">
-            <p className="text-[14px] text-whatsapp-secondary truncate max-w-[200px]">
-              {status || "Hey there! I am using WhatsApp."}
-            </p>
-          </div>
+        <div className="flex justify-between items-center mt-0.5">
+          <p className="text-[14px] text-whatsapp-secondary truncate max-w-[260px]">
+            {status || "Hey there! I am using WhatsApp."}
+          </p>
         </div>
       </div>
     </div>

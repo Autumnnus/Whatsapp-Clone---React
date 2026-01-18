@@ -51,46 +51,52 @@ const LeftHeader: React.FC<LeftHeaderProps> = ({
             className="flex items-center cursor-pointer"
             onClick={() => setUserSettingsModalOpen(true)}
           >
-            <img
-              src={
-                authFBConfig.currentUser?.photoURL ||
-                "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
-              }
-              alt="Profile"
-              className="w-10 h-10 object-cover rounded-full"
-            />
+            <div className="w-10 h-10 rounded-full overflow-hidden">
+              <img
+                src={
+                  authFBConfig.currentUser?.photoURL ||
+                  "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+                }
+                alt="Profile"
+                className="w-full h-full object-cover"
+              />
+            </div>
           </div>
-          <div className="flex items-center space-x-5 text-[#aebac1]">
-            <BsChatLeftTextFill
-              size={20}
-              className="cursor-pointer hover:text-white transition-colors"
+          <div className="flex items-center space-x-2 text-[#aebac1]">
+            <button
               onClick={() => setToggleMessageUserBar(true)}
+              className="p-2 rounded-full hover:bg-[#3c454c] transition-colors"
               title="Chats"
-            />
-            <HiUsers
-              size={22}
-              className="cursor-pointer hover:text-white transition-colors"
+            >
+              <BsChatLeftTextFill size={19} />
+            </button>
+            <button
               onClick={() => setToggleMessageUserBar(false)}
+              className="p-2 rounded-full hover:bg-[#3c454c] transition-colors"
               title="Contacts"
-            />
-            <IoMdSettings
-              size={22}
-              className="cursor-pointer hover:text-white transition-colors"
+            >
+              <HiUsers size={22} />
+            </button>
+            <button
               onClick={() => setUserSettingsModalOpen(true)}
+              className="p-2 rounded-full hover:bg-[#3c454c] transition-colors"
               title="Settings"
-            />
-            <GoSignOut
-              size={22}
-              className="cursor-pointer hover:text-white transition-colors"
+            >
+              <IoMdSettings size={22} />
+            </button>
+            <button
               onClick={handleLogout}
+              className="p-2 rounded-full hover:bg-[#3c454c] transition-colors text-red-400"
               title="Logout"
-            />
+            >
+              <GoSignOut size={22} />
+            </button>
           </div>
         </div>
       ) : (
         <div className="w-full flex justify-center items-center h-full">
-          <h1 className="text-whatsapp-secondary font-medium tracking-wide">
-            WHATSAPP WEB
+          <h1 className="text-whatsapp-teal font-semibold tracking-[2px] text-sm italic">
+            WHATSAPP
           </h1>
         </div>
       )}

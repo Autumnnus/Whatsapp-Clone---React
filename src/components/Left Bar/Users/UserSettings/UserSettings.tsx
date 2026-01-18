@@ -223,7 +223,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
     <div>
       {/* Settings Drawer - Slides over the sidebar */}
       <div
-        className={`absolute top-0 left-0 h-full w-full bg-whatsapp-panel z-20 transition-transform duration-300 ${userSettingsModalOpen ? "translate-x-0" : "-translate-x-full"} flex flex-col`}
+        className={`absolute top-0 left-0 h-full w-full bg-[#111b21] z-[50] transition-all duration-300 transform ${userSettingsModalOpen ? "translate-x-0 opacity-100" : "-translate-x-full opacity-0 pointer-events-none"} flex flex-col shadow-2xl`}
       >
         <div className="h-[108px] bg-whatsapp-outgoing flex items-end pb-4 px-6 text-white shrink-0">
           <div className="flex items-center gap-8 w-full">
