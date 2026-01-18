@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useDispatch } from "react-redux";
-import { toggleLoginOrSignupReducer } from "../../../redux/userSlice";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { authFBConfig, db } from "../../../config/config";
-import { SetStateAction, useState, useEffect } from "react";
-import validator from "validator";
-import { toast } from "react-toastify";
 import { collection, doc, setDoc } from "@firebase/firestore";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { SetStateAction, useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { toast } from "react-toastify";
+import validator from "validator";
+import { authFBConfig, db } from "../../../config/config";
+import { toggleLoginOrSignupReducer } from "../../../redux/userSlice";
 import { images } from "../../../utils/images";
 
 const Signup = () => {
@@ -43,7 +43,7 @@ const Signup = () => {
         const userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
-          password
+          password,
         );
         const user = userCredential.user;
 
@@ -71,87 +71,124 @@ const Signup = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-black min-w-fit overflow-y-auto">
-      <h1>Sign Up</h1>
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-600">
-          Name:
-        </label>
-        <input
-          type="name"
-          id="name"
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-          placeholder="Enter your Name"
-          onChange={(e) => setName(e.target.value)}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="email" className="block text-gray-600">
-          E-mail:
-        </label>
-        <input
-          type="email"
-          id="email"
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-          placeholder="Enter your E-mail"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </div>
-      <div className="mb-4">
-        <label htmlFor="password" className="block text-gray-600">
-          Password:
-        </label>
-        <input
-          type="password"
-          id="password"
-          className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500"
-          placeholder="Enter Your Password"
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <div className="mb-4 flex">
-        {/* {images.map((image, index) => (
+    <div className="flex flex-col items-center justify-center bg-[#202c33] text-whatsapp-primary p-10 rounded-2xl shadow-2xl w-full max-h-[90vh] overflow-y-auto custom-scrollbar border border-[#313d45]">
+      <div className="mb-10 text-center">
+        <div className="bg-[#00a884] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg shadow-[#00a88440]">
           <img
-            key={image.id}
-            src={image.url}
-            alt="img"
-            className={`h-20 rounded-full cursor-pointer ${
-              selectedImageIndex === index
-                ? "border-4 border-blue-500 transform hover:scale-110 transition-transform duration-500"
-                : ""
-            }`}
-            onClick={() => handleImageClick(index)}
+            src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg"
+            alt="WhatsApp"
+            className="w-10 h-10 invert brightness-0"
           />
-        ))} */}
-        <div className="grid grid-cols-6 space-x-2">
+        </div>
+        <h1 className="text-3xl font-light tracking-tight">Create Account</h1>
+        <p className="text-whatsapp-secondary mt-2 text-sm">
+          Join the community today
+        </p>
+      </div>
+
+      <div className="space-y-6 w-full mb-8">
+        <div className="relative group">
+          <input
+            type="text"
+            id="name"
+            className="peer w-full bg-transparent border-b-2 border-[#313d45] py-2 text-whatsapp-primary placeholder-transparent focus:outline-none focus:border-whatsapp-teal transition-all duration-300"
+            placeholder=" "
+            onChange={(e) => setName(e.target.value)}
+          />
+          <label
+            htmlFor="name"
+            className="absolute left-0 top-2 text-whatsapp-secondary text-base transition-all duration-300 pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-whatsapp-teal peer-focus:text-xs peer-[:not(:placeholder-shown)]:-top-3.5 peer-[:not(:placeholder-shown)]:text-whatsapp-teal peer-[:not(:placeholder-shown)]:text-xs"
+          >
+            Full Name
+          </label>
+        </div>
+
+        <div className="relative group">
+          <input
+            type="email"
+            id="email"
+            className="peer w-full bg-transparent border-b-2 border-[#313d45] py-2 text-whatsapp-primary placeholder-transparent focus:outline-none focus:border-whatsapp-teal transition-all duration-300"
+            placeholder=" "
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <label
+            htmlFor="email"
+            className="absolute left-0 top-2 text-whatsapp-secondary text-base transition-all duration-300 pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-whatsapp-teal peer-focus:text-xs peer-[:not(:placeholder-shown)]:-top-3.5 peer-[:not(:placeholder-shown)]:text-whatsapp-teal peer-[:not(:placeholder-shown)]:text-xs"
+          >
+            E-mail Address
+          </label>
+        </div>
+
+        <div className="relative group">
+          <input
+            type="password"
+            id="password"
+            className="peer w-full bg-transparent border-b-2 border-[#313d45] py-2 text-whatsapp-primary placeholder-transparent focus:outline-none focus:border-whatsapp-teal transition-all duration-300"
+            placeholder=" "
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <label
+            htmlFor="password"
+            className="absolute left-0 top-2 text-whatsapp-secondary text-base transition-all duration-300 pointer-events-none peer-placeholder-shown:text-base peer-placeholder-shown:top-2 peer-focus:-top-3.5 peer-focus:text-whatsapp-teal peer-focus:text-xs peer-[:not(:placeholder-shown)]:-top-3.5 peer-[:not(:placeholder-shown)]:text-whatsapp-teal peer-[:not(:placeholder-shown)]:text-xs"
+          >
+            Password
+          </label>
+        </div>
+      </div>
+
+      <div className="mb-8 w-full">
+        <label className="block text-whatsapp-teal text-xs mb-4 uppercase tracking-wider font-semibold">
+          Select Profile Picture
+        </label>
+        <div className="grid grid-cols-6 gap-3">
           {images.map((image, index) => (
-            <img
+            <div
               key={image.id}
-              src={image.url}
-              alt="img"
-              className={`h-20 rounded-full cursor-pointer mxx-auto p-1 ${
+              className={`relative rounded-full cursor-pointer transition-all duration-300 ${
                 highlightImageIndex === index
-                  ? "border-4 border-red-900 transform hover:scale-110 transition-transform duration-500"
-                  : ""
+                  ? "ring-4 ring-whatsapp-teal ring-offset-4 ring-offset-[#202c33] scale-110"
+                  : "hover:scale-110 opacity-60 hover:opacity-100"
               }`}
               onClick={() => handleImageClick(index)}
-            />
+            >
+              <img
+                src={image.url}
+                alt="avatar"
+                className="w-full h-full rounded-full object-cover shadow-md"
+              />
+              {highlightImageIndex === index && (
+                <div className="absolute -right-1 -bottom-1 bg-whatsapp-teal text-white rounded-full p-0.5 shadow-lg">
+                  <svg
+                    viewBox="0 0 24 24"
+                    width="12"
+                    height="12"
+                    className="fill-current"
+                  >
+                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"></path>
+                  </svg>
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
-      <div>
+
+      <div className="w-full space-y-4">
         <button
-          className="w-full bg-rose-800 text-white py-2 rounded-lg hover-bg-rose-950 transition duration-300 mb-4"
+          className="w-full bg-whatsapp-teal text-white py-3.5 rounded-lg active:scale-95 transition-all duration-200 font-semibold shadow-lg shadow-[#00a88430] hover:bg-[#06cf9c]"
           onClick={handleSignup}
         >
-          Sign Up
+          Create Account
         </button>
-        <button
-          className="w-full bg-slate-500 text-white py-2 rounded-lg hover:bg-slate-800 transition duration-300 mb-4"
-          onClick={() => dispatch(toggleLoginOrSignupReducer())}
-        >
-          Do you have an Account?
-        </button>
+        <div className="text-center pt-2">
+          <button
+            className="text-whatsapp-secondary text-sm hover:text-whatsapp-teal transition-colors"
+            onClick={() => dispatch(toggleLoginOrSignupReducer())}
+          >
+            Already have an account?{" "}
+            <span className="font-semibold underline">Login</span>
+          </button>
+        </div>
       </div>
     </div>
   );

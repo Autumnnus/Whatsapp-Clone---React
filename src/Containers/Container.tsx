@@ -6,8 +6,8 @@ type ContainerProps = {
 
 const Container: React.FC<ContainerProps> = ({ children }) => {
   return (
-    <div className="flex justify-center">
-      <div className="w-11/12 mt-3">{children}</div>
+    <div className="relative h-full w-full xl:max-w-[1600px] xl:h-[calc(100vh-38px)] xl:mx-auto xl:my-[19px] bg-whatsapp-bg xl:rounded-lg overflow-hidden shadow-2xl flex flex-col">
+      {children}
     </div>
   );
 };

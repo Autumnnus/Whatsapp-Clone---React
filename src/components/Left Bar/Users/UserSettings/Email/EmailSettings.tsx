@@ -5,7 +5,7 @@ type EmailSettingsProps = {
   dataUpdate: {
     email?: string;
   };
-  //setVerifyEmailModal: boolean;
+  setVerifyEmailModal: (isOpen: boolean) => void;
 };
 
 const EmailSettings: React.FC<EmailSettingsProps> = ({

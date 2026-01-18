@@ -1,7 +1,15 @@
+import { sendEmailVerification } from "firebase/auth";
 import { AiFillCloseCircle } from "react-icons/ai";
 import { authFBConfig } from "../../../../../config/config";
-import { sendEmailVerification } from "firebase/auth";
-const VerifyEmailModal = ({ verifyEmailModal, setVerifyEmailModal }) => {
+type VerifyEmailModalProps = {
+  verifyEmailModal: boolean;
+  setVerifyEmailModal: (isOpen: boolean) => void;
+};
+
+const VerifyEmailModal: React.FC<VerifyEmailModalProps> = ({
+  verifyEmailModal,
+  setVerifyEmailModal,
+}) => {
   const verifyEmail = async () => {
     try {
       // Check if the user is signed in

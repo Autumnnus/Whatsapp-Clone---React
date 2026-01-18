@@ -1,7 +1,7 @@
 import { DocumentData } from "@firebase/firestore";
 
 export type userSliceType = {
-  users: string[];
+  users: { id: string; data: DocumentData }[];
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   auth: any;
   token: string;
@@ -12,7 +12,7 @@ export type userSliceType = {
 
 export type UserSliceStateSelector = {
   userStore: {
-    users?: string[];
+    users?: { id: string; data: DocumentData }[];
     token?: string;
     toggleLoginOrSignup?: boolean;
     loginMode?: boolean;

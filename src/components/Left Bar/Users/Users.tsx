@@ -9,26 +9,20 @@ type UsersProps = {
 
 const Users: React.FC<UsersProps> = ({ users }) => {
   const filteredUsers = (users ?? []).filter(
-    // @ts-ignore
-    (user) => user.id !== authFBConfig.lastNotifiedUid
+    (user) => user.id !== authFBConfig.currentUser?.uid,
   );
 
   return (
-    <div>
-      <div className="border-r border-gray-300">
-        <div className="overflow-y-auto h-[calc(100vh-136px)]">
-          <h1 className="text-center text-xl">User List</h1>
-          {filteredUsers.map((user) => (
-            <UserCard
-              key={user.data.uid}
-              id={user.data.uid}
-              name={user.data.name}
-              photo={user.data.photo}
-              status={user.data.status}
-            />
-          ))}
-        </div>
-      </div>
+    <div className="flex flex-col w-full">
+      {filteredUsers.map((user) => (
+        <UserCard
+          key={user.data.uid}
+          id={user.data.uid}
+          name={user.data.name}
+          photo={user.data.photo}
+          status={user.data.status}
+        />
+      ))}
     </div>
   );
 };

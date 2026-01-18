@@ -1,19 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useState, useEffect, useRef } from "react";
-import { BiSolidSend } from "react-icons/bi";
-import ChatMessage from "./ChatMessage";
 import {
   addDoc,
   collection,
-  serverTimestamp,
-  query,
-  where,
   onSnapshot,
   orderBy,
+  query,
+  serverTimestamp,
+  where,
 } from "@firebase/firestore";
-import { authFBConfig, db } from "../../../config/config";
+import { useEffect, useRef, useState } from "react";
+import { BiSolidSend } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { authFBConfig, db } from "../../../config/config";
 import { MessageSliceStateSelector } from "../../../types/MessageTypes";
+import ChatMessage from "./ChatMessage";
 
 type Message = {
   text: string;
@@ -30,13 +30,13 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const messagesRef = collection(db, "messages");
   const chatID = useSelector(
-    (state: MessageSliceStateSelector) => state.messageStore.chatID || []
+    (state: MessageSliceStateSelector) => state.messageStore.chatID || [],
   );
   useEffect(() => {
     const querryMessages = query(
       messagesRef,
       where("room", "==", chatID),
-      orderBy("createdAt")
+      orderBy("createdAt"),
     );
     const unsuscribe = onSnapshot(querryMessages, (snapshot) => {
       const messages: Message[] = [];
@@ -55,8 +55,7 @@ const Chat = () => {
       text: newMessage,
       createdAt: serverTimestamp(),
       user: authFBConfig.currentUser?.displayName,
-      // @ts-ignore
-      userId: authFBConfig.lastNotifiedUid,
+      userId: authFBConfig.currentUser?.uid,
       room: chatID,
     });
     setNewMessage("");
@@ -68,45 +67,33 @@ const Chat = () => {
     }
   };
   return (
-    <div className="flex flex-col bg-gray-700">
-      <div className="flex-grow overflow-y-auto px-4 h-[calc(100vh-132px)]">
-        <div>
+    <div className="flex flex-col h-full relative z-10 w-full">
+      <div className="flex-1 overflow-y-auto px-[5%] py-2 custom-scrollbar">
+        <div className="flex flex-col justify-end min-h-full pb-2">
           {messages.map((message) => (
             <ChatMessage key={message.id} msg={message}></ChatMessage>
           ))}
         </div>
       </div>
-      <div className="bg-gray-200 px-4 py-2 flex items-center text-black">
-        {/* <button className="text-gray-600">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-6 w-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth="2"
-            d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+      <div className="bg-whatsapp-header px-4 py-2 flex items-center min-h-[62px] z-20 shrink-0">
+        <div className="w-full bg-whatsapp-input rounded-lg flex items-center px-4 py-2">
+          <input
+            type="text"
+            placeholder="Type a message"
+            className="bg-transparent outline-none flex-grow text-whatsapp-primary placeholder-whatsapp-secondary text-sm"
+            value={newMessage}
+            onChange={(event) => setNewMessage(event.target.value)}
+            // @ts-ignore
+            ref={inputRef}
+            onKeyPress={(e) => onKeyPressInput(e)}
           />
-        </svg>
-      </button> */}
-        <input
-          type="text"
-          placeholder="Type a message..."
-          className="bg-transparent outline-none p-2 flex-grow"
-          value={newMessage}
-          onChange={(event) => setNewMessage(event.target.value)}
-          ref={inputRef}
-          onKeyPress={(e) => onKeyPressInput(e)}
-        />
-        <BiSolidSend
-          size={24}
-          className="text-green-500 cursor-pointer"
-          onClick={handleSubmit}
-        ></BiSolidSend>
+        </div>
+        <button className="ml-4 p-2" onClick={handleSubmit}>
+          <BiSolidSend
+            size={24}
+            className="text-whatsapp-secondary hover:text-whatsapp-teal transition-colors"
+          />
+        </button>
       </div>
     </div>
   );

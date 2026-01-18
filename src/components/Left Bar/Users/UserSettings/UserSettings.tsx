@@ -1,42 +1,32 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState } from "react";
-import { authFBConfig, db } from "../../../../config/config";
-import { AiFillCloseCircle } from "react-icons/ai";
-import { toast } from "react-toastify";
+import { deleteDoc, doc, getDoc, updateDoc } from "@firebase/firestore";
 import {
-  User,
   onAuthStateChanged,
-  sendEmailVerification,
   signOut,
-  updateEmail,
   updateProfile,
   verifyBeforeUpdateEmail,
 } from "firebase/auth";
-import {
-  collection,
-  doc,
-  updateDoc,
-  getDoc,
-  deleteDoc,
-} from "@firebase/firestore";
-import { images } from "../../../../utils/images";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
+import { authFBConfig, db } from "../../../../config/config";
 import { loginModeToggle, tokenInfo } from "../../../../redux/userSlice";
-import { UserSliceStateSelector } from "../../../../types/UserTypes";
-import EmailSettings from "./Email/EmailSettings";
-import PasswordSettings from "./Password/PasswordSettings";
-import PhoneSettings from "./Phone/PhoneSettings";
-import AvatarSettings from "./Avatar/AvatarSettings";
-import DisplayNameSettings from "./DisplayName/DisplayNameSettings";
-import DeleteSettings from "./Account/DeleteSettings";
-import StatusSettings from "./Account/StatusSettings";
-import AccountDetails from "./Account/AccountDetails";
 import {
   UserDataUpdate,
   UserSettingsProps,
 } from "../../../../types/UserSettingsTypes";
+import { UserSliceStateSelector } from "../../../../types/UserTypes";
+import { images } from "../../../../utils/images";
+import AccountDetails from "./Account/AccountDetails";
+import DeleteSettings from "./Account/DeleteSettings";
+import StatusSettings from "./Account/StatusSettings";
+import AvatarSettings from "./Avatar/AvatarSettings";
+import DisplayNameSettings from "./DisplayName/DisplayNameSettings";
+import EmailSettings from "./Email/EmailSettings";
 import VerifyEmailModal from "./Email/VerifyEmailModal";
+import PasswordSettings from "./Password/PasswordSettings";
+import PhoneSettings from "./Phone/PhoneSettings";
 
 const UserSettings: React.FC<UserSettingsProps> = ({
   setUserSettingsModalOpen,
@@ -55,7 +45,7 @@ const UserSettings: React.FC<UserSettingsProps> = ({
   const [verifyEmailModal, setVerifyEmailModal] = useState(false);
   const dispatch = useDispatch();
   const token = useSelector(
-    (state: UserSliceStateSelector) => state.userStore.token
+    (state: UserSliceStateSelector) => state.userStore.token,
   );
 
   const handleDeleteChange = () => {
@@ -108,10 +98,12 @@ const UserSettings: React.FC<UserSettingsProps> = ({
   const submitUpdateDatas = async (e: any) => {
     e.preventDefault();
     try {
-      const user: User | null = authFBConfig.currentUser;
-      const userRef = collection(db, "users");
-      // @ts-ignore
-      const customDocRef = doc(userRef, authFBConfig.lastNotifiedUid);
+      const user = authFBConfig.currentUser;
+      if (!user) {
+        toast.error("User not authenticated.");
+        return;
+      }
+      const customDocRef = doc(db, "users", user.uid);
 
       // if (dataUpdate.password !== "") {
       //   await updatePassword(user, dataUpdate.password);
@@ -202,89 +194,132 @@ const UserSettings: React.FC<UserSettingsProps> = ({
     }
   };
   const fetchFromDB = async () => {
-    // @ts-ignore
-    const customDocRef = doc(db, "users", authFBConfig.lastNotifiedUid);
-    const docSnapshot = await getDoc(customDocRef);
-    const data = docSnapshot.data();
-    setFetchedDatas({
-      name: data?.name || "",
-      email: data?.email || "",
-      photo: data?.photo || "",
-      status: data?.status || "",
-      uid: data?.uid || "",
-    });
+    const user = authFBConfig.currentUser;
+    if (!user) return;
+
+    try {
+      const customDocRef = doc(db, "users", user.uid);
+      const docSnapshot = await getDoc(customDocRef);
+      if (docSnapshot.exists()) {
+        const data = docSnapshot.data();
+        setFetchedDatas({
+          name: data?.name || "",
+          email: data?.email || "",
+          photo: data?.photo || "",
+          status: data?.status || "",
+          uid: data?.uid || "",
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
   useEffect(() => {
-    fetchFromDB();
-    // console.log(dataUpdate);
-  }, [dataUpdate, userSettingsModalOpen]);
+    if (userSettingsModalOpen) {
+      fetchFromDB();
+    }
+  }, [userSettingsModalOpen]);
   return (
     <div>
-      {userSettingsModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 ">
-          <div className="absolute inset-0 bg-black opacity-25"></div>
-          <div className="bg-gray-100 p-4 rounded shadow-lg text-black h-screen fixed left-2 min-w-fit overflow-y-auto">
-            <div className="flex justify-between">
-              <h2 className="text-2xl mb-4 px-2">Settings</h2>
-              <AiFillCloseCircle
-                size={28}
-                onClick={() => setUserSettingsModalOpen(false)}
-                className="text-red-500 cursor-pointer rounded-full hover:text-red-800"
-              ></AiFillCloseCircle>
-            </div>
+      {/* Settings Drawer - Slides over the sidebar */}
+      <div
+        className={`absolute top-0 left-0 h-full w-full bg-whatsapp-panel z-20 transition-transform duration-300 ${userSettingsModalOpen ? "translate-x-0" : "-translate-x-full"} flex flex-col`}
+      >
+        <div className="h-[108px] bg-whatsapp-outgoing flex items-end pb-4 px-6 text-white shrink-0">
+          <div className="flex items-center gap-8 w-full">
+            <button
+              onClick={() => setUserSettingsModalOpen(false)}
+              className="hover:bg-inherit"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                height="24"
+                width="24"
+                className="fill-current text-white"
+              >
+                <path d="M12 4l1.4 1.4L7.8 11H20v2H7.8l5.6 5.6L12 20l-8-8 8-8z"></path>
+              </svg>
+            </button>
+            <h1 className="text-[19px] font-medium">Profile</h1>
+          </div>
+        </div>
 
-            <AccountDetails fetchedDatas={fetchedDatas}></AccountDetails>
-            <form className="mt-3 space-y-3 bg-slate-200 p-2 rounded-md text-black">
-              <h1 className="text-center font-bold border-b-2 border-black">
-                Change Status
-              </h1>
-              <StatusSettings
-                onchangeFunc={onchangeFunc}
-                dataUpdate={dataUpdate}
-              ></StatusSettings>
-              <h1 className="text-center font-bold border-b-2 border-black">
-                Change Informations
-              </h1>
+        <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <AccountDetails fetchedDatas={fetchedDatas}></AccountDetails>
+
+          <div className="bg-whatsapp-panel px-8 pb-8 pt-4">
+            <div className="mb-6">
+              <span className="text-whatsapp-teal text-[14px] mb-4 block">
+                Your name
+              </span>
               <DisplayNameSettings
                 onchangeFunc={onchangeFunc}
                 dataUpdate={dataUpdate}
               ></DisplayNameSettings>
+            </div>
+
+            <div className="mb-6">
+              <span className="text-whatsapp-secondary text-[14px] block mb-4">
+                This is not your username or pin. This name will be visible to
+                your WhatsApp contacts.
+              </span>
+            </div>
+
+            <div className="mb-6">
+              <span className="text-whatsapp-teal text-[14px] mb-4 block">
+                About
+              </span>
+              <StatusSettings
+                onchangeFunc={onchangeFunc}
+                dataUpdate={dataUpdate}
+              ></StatusSettings>
+            </div>
+
+            {/* Additional settings can be hidden or styled similarly */}
+            <div className="hidden">
               <EmailSettings
                 onchangeFunc={onchangeFunc}
                 dataUpdate={dataUpdate}
                 setVerifyEmailModal={setVerifyEmailModal}
-              ></EmailSettings>
+              />
               <PasswordSettings
                 onchangeFunc={onchangeFunc}
                 dataUpdate={dataUpdate}
-              ></PasswordSettings>
+              />
               <PhoneSettings
                 onchangeFunc={onchangeFunc}
                 dataUpdate={dataUpdate}
-              ></PhoneSettings>
+              />
               <AvatarSettings
                 selectedImageIndex={selectedImageIndex}
                 handleImageClick={handleImageClick}
-              ></AvatarSettings>
-              <h1 className="text-center font-bold border-b-2 border-black">
-                Delete Account
-              </h1>
+              />
               <DeleteSettings
                 deleteChecked={deleteChecked}
                 handleDeleteChange={handleDeleteChange}
-              ></DeleteSettings>
-              <div className="text-center">
-                <button
-                  className="bg-blue-500 text-white py-1 px-6 rounded cursor-pointer"
-                  onClick={submitUpdateDatas}
-                >
-                  Save
-                </button>
-              </div>
-            </form>
+              />
+            </div>
+
+            <div className="mt-8 flex justify-center">
+              <button
+                className="bg-whatsapp-teal text-white py-2 px-6 rounded shadow-sm hover:bg-[#008f6f] transition-colors"
+                onClick={submitUpdateDatas}
+              >
+                Save Changes
+              </button>
+            </div>
+
+            <div className="mt-4 text-center">
+              <button
+                onClick={handleLogout}
+                className="text-red-400 hover:text-red-500 text-sm"
+              >
+                Logout
+              </button>
+            </div>
           </div>
         </div>
-      )}
+      </div>
       {verifyEmailModal && (
         <VerifyEmailModal
           setVerifyEmailModal={setVerifyEmailModal}

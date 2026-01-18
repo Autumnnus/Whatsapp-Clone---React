@@ -5,26 +5,25 @@ type AccountDetailsProps = {
   fetchedDatas: UserDataUpdate;
 };
 
-const AccountDetails: React.FC<AccountDetailsProps> = ({ fetchedDatas }) => {
+const AccountDetails: React.FC<AccountDetailsProps> = () => {
   return (
-    <div>
-      <div className="flex space-x-10 bg-slate-200 p-2 rounded-md text-black">
-        <div>
-          <img
-            src={authFBConfig.currentUser?.photoURL ?? ""}
-            alt=""
-            className="w-12 h-12 object-cover rounded-full"
-          />
+    <div className="flex flex-col items-center justify-center py-7 pb-4 bg-whatsapp-panel">
+      <div className="relative group cursor-pointer w-[200px] h-[200px] rounded-full overflow-hidden mb-4">
+        <img
+          src={
+            authFBConfig.currentUser?.photoURL ??
+            "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"
+          }
+          alt="Profile"
+          className="w-full h-full object-cover group-hover:opacity-80 transition-opacity"
+        />
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-[rgba(32,44,51,0.65)] opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+          <span className="text-white text-xs uppercase tracking-wider text-center px-4 font-normal">
+            Change
+            <br />
+            Profile Photo
+          </span>
         </div>
-        <div className="grid grid-cols-2">
-          <p>{authFBConfig.currentUser?.displayName}</p>
-          <p>{authFBConfig.currentUser?.email}</p>
-          <p>{authFBConfig.currentUser?.phoneNumber}</p>
-        </div>
-      </div>
-      <div className="flex flex-wrap mt-3 bg-slate-200 p-2 rounded-md text-black space-x-2">
-        <h1 className="font-bold">Status:</h1>
-        <p className="max-w-[400px] inline-block">{fetchedDatas.status}</p>
       </div>
     </div>
   );

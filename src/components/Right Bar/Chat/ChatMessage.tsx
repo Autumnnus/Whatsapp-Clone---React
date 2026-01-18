@@ -14,8 +14,7 @@ type newChatMessageProps = {
 };
 
 const ChatMessage: React.FC<newChatMessageProps> = ({ msg }) => {
-  // @ts-ignore
-  const user = authFBConfig.lastNotifiedUid;
+  const user = authFBConfig.currentUser?.uid;
   if (!msg.createdAt) {
     return null;
   }
@@ -32,25 +31,19 @@ const ChatMessage: React.FC<newChatMessageProps> = ({ msg }) => {
   return (
     <>
       {user === msg.userId ? (
-        <div className="mt-4 flex justify-end">
-          <div className="bg-green-900 text-white p-2 rounded-md flex items-center space-x-2">
-            <p>{msg.text} </p>
-            <span
-              className="text-gray-400"
-              style={{ fontSize: "0.55rem", marginTop: "10px" }}
-            >
+        <div className="flex justify-end mb-2">
+          <div className="bg-whatsapp-outgoing text-whatsapp-primary px-2 pt-1.5 pb-1 rounded-lg rounded-tr-none max-w-[65%] shadow-sm relative break-words text-sm">
+            <p className="mr-8 leading-relaxed px-1">{msg.text}</p>
+            <span className="text-[10px] text-[hsla(0,0%,100%,0.6)] absolute bottom-1 right-2 w-fit">
               {hour}
             </span>
           </div>
         </div>
       ) : (
-        <div className="mt-4 flex justify-start">
-          <div className="bg-gray-800 text-white p-2 rounded-md flex items-center space-x-2">
-            <p>{msg.text} </p>
-            <span
-              className="text-gray-400"
-              style={{ fontSize: "0.55rem", marginTop: "10px" }}
-            >
+        <div className="flex justify-start mb-2">
+          <div className="bg-whatsapp-incoming text-whatsapp-primary px-2 pt-1.5 pb-1 rounded-lg rounded-tl-none max-w-[65%] shadow-sm relative break-words text-sm">
+            <p className="mr-8 leading-relaxed px-1">{msg.text}</p>
+            <span className="text-[10px] text-[hsla(0,0%,100%,0.6)] absolute bottom-1 right-2 w-fit">
               {hour}
             </span>
           </div>
